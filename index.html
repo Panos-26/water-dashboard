@@ -99,11 +99,31 @@
         }
 
         function sendCommand(cmd) {
-            addLog(`Αποστολή εντολής: ${cmd}...`);
-            database.ref('system/command').set(cmd)
-                .then(() => addLog(`✅ Η εντολή ${cmd} καταχωρήθηκε.`))
-                .catch((err) => addLog(`❌ Σφάλμα: ${err}`));
-        }
+    // ΑΠΟΔΕΙΞΗ 1: Ελέγχουμε αν το κουμπί όντως αντιλαμβάνεται το πάτημα και τη λέξη
+    addLog(`[STEP 1] Το κουμπί πατήθηκε. Τιμή εντολής: "${cmd}"`);
+    console.log("Step 1 - Command text:", cmd);
+
+    // ΑΠΟΔΕΙΞΗ 2: Έλεγχος αν η Firebase είναι έτοιμη και συνδεδεμένη στον browser
+    if (!database) {
+        addLog(`[⚠️ ERROR] Η Firebase ΔΕΝ έχει αρχικοποιηθεί σωστά στον browser!`);
+        console.error("Step 2 - Firebase database object is null or undefined.");
+        return;
+    }
+    addLog(`[STEP 2] Η Firebase είναι έτοιμη. Αποστολή στη διαδρομή 'system/command'...`);
+
+    // Εκτέλεση της αποστολής
+    database.ref('system/command').set(cmd)
+        .then(() => {
+            // ΑΠΟΔΕΙΞΗ 3: Η Firebase απάντησε ότι παρέλαβε επιτυχώς την εντολή
+            addLog(`[STEP 3] ✅ ΕΠΙΤΥΧΙΑ! Η Firebase επιβεβαίωσε την εγγραφή του "${cmd}".`);
+            console.log("Step 3 - Firebase write successful.");
+        })
+        .catch((err) => {
+            // ΑΠΟΔΕΙΞΗ 4: Αν η Google μπλοκάρει την εντολή, θα μας γράψει το ακριβές σφάλμα
+            addLog(`[❌ STEP 4 - FAILURE] Η Firebase απέρριψε την εντολή! Σφάλμα: ${err.message}`);
+            console.error("Step 4 - Firebase write failed:", err);
+        });
+}
     </script>
 </body>
 </html>
