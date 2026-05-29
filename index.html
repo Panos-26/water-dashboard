@@ -4,115 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Water V5 Dashboard</title>
-    <!-- Εισαγωγή Firebase -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
-    
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121824;
-            color: #ffffff;
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 15px;
-            width: 100%;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #121824; color: #ffffff; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .header { text-align: center; margin-bottom: 15px; width: 100%; }
         .header h2 { margin: 0; color: #4dabf7; font-size: 22px; }
-        .status-badge {
-            display: inline-block;
-            background-color: #2b8a3e;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            width: 100%;
-            max-width: 400px;
-        }
-        .card {
-            background-color: #1c2333;
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            border: 1px solid #2d3748;
-        }
+        .status-badge { display: inline-block; background-color: #2b8a3e; color: white; padding: 3px 10px; border-radius: 20px; font-size: 12px; margin-top: 5px; }
+        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; max-width: 400px; }
+        .card { background-color: #1c2333; border-radius: 12px; padding: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 1px solid #2d3748; }
         .card-full { grid-column: span 2; }
         .card h3 { margin: 0; font-size: 13px; color: #a0aec0; text-transform: uppercase; }
         .card .value { font-size: 22px; font-weight: bold; margin: 5px 0; color: #e2e8f0; }
         .card .unit { font-size: 14px; color: #718096; }
-        
-        /* Χρώματα για Καταστάσεις */
         .mode-home { color: #4c6ef5 !important; }
         .mode-out { color: #fa5252 !important; }
         .valve-open { color: #40c057 !important; }
         .valve-closed { color: #be4bdb !important; }
-
-        .btn-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            width: 100%;
-            max-width: 400px;
-            margin-top: 15px;
-        }
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            color: white;
-            transition: 0.2s;
-        }
+        .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 400px; margin-top: 15px; }
+        button { padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
         .btn-open { background-color: #2b8a3e; }
-        .btn-open:active { background-color: #237032; }
         .btn-close { background-color: #c92a2a; }
-        .btn-close:active { background-color: #a62222; }
-
-        /* Console Log Area */
-        .console-container {
-            width: 100%;
-            max-width: 400px;
-            margin-top: 15px;
-        }
+        .console-container { width: 100%; max-width: 400px; margin-top: 15px; }
         .console-title { font-size: 12px; color: #a0aec0; margin-bottom: 5px; padding-left: 5px; }
-        .console-box {
-            background-color: #090d16;
-            border: 1px solid #2d3748;
-            border-radius: 8px;
-            height: 120px;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
-            overflow-y: auto;
-            color: #38bdf8;
-            line-height: 1.4;
-        }
+        .console-box { background-color: #090d16; border: 1px solid #2d3748; border-radius: 8px; height: 120px; padding: 10px; font-family: 'Courier New', monospace; font-size: 11px; overflow-y: auto; color: #38bdf8; line-height: 1.4; }
     </style>
 </head>
 <body>
-
     <div class="header">
         <h2>PROJECT_WATER_V5</h2>
         <div class="status-badge">● SYSTEM ONLINE</div>
     </div>
-
     <div class="grid-container">
-        <!-- Live Καταστάσεις -->
         <div class="card">
             <h3>Λειτουργία</h3>
             <div id="lbl-mode" class="value">--</div>
@@ -121,8 +44,6 @@
             <h3>Ηλεκτροβάνα</h3>
             <div id="lbl-valve" class="value">--</div>
         </div>
-
-        <!-- Μετρητές Λίτρων -->
         <div class="card card-full">
             <h3>Ημερήσια Κατανάλωση (TD)</h3>
             <div class="value" style="font-size: 32px; color: #38bdf8;"><span id="val-daily">0.0</span> <span class="unit">L</span></div>
@@ -136,72 +57,51 @@
             <div class="value"><span id="val-ytd">0.0</span> <span class="unit">L</span></div>
         </div>
     </div>
-
-    <!-- Κουμπιά Εντολών -->
     <div class="btn-container">
         <button class="btn-open" onclick="sendCommand('OPEN')">ΑΝΟΙΓΜΑ ΒΑΝΑΣ</button>
         <button class="btn-close" onclick="sendCommand('CLOSE')">ΚΛΕΙΣΙΜΟ ΒΑΝΑΣ</button>
     </div>
-
-    <!-- Real-time Console Logs -->
     <div class="console-container">
         <div class="console-title">LIVE LOGS CONSOLE</div>
-        <div id="console-box" class="console-box">
-            [SYS] Το Dashboard εκκινήθηκε...<br>
-        </div>
+        <div id="console-box" class="console-box">[SYS] Το Dashboard εκκινήθηκε...<br></div>
     </div>
-
     <script>
-        // --- ΡΥΘΜΙΣΗ FIREBASE ---
-        // ⚠️ ΑΝΤΙΚΑΤΑΣΤΗΣΕ ΜΕ ΤΑ ΔΙΚΑ ΣΟΥ ΣΤΟΙΧΕΙΑ ΑΠΟ ΤΟ FIREBASE!
+        // ✅ ΔΙΟΡΘΩΜΕΝΟ URL: ΧΩΡΙΣ ΚΑΘΕΤΟ ΣΤΟ ΤΕΛΟΣ
         const firebaseConfig = {
-            databaseURL: "https://project-water-v5-default-rtdb.firebaseio.com/system.json"
+            databaseURL: "https://firebaseio.com"
         };
-        
-        // Αρχικοποίηση Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Σύνδεση και Ανάγνωση Δεδομένων σε Πραγματικό Χρόνο (Live Listen)
         database.ref('system').on('value', (snapshot) => {
             const data = snapshot.val();
             if(data) {
-                // Ενημέρωση Λίτρων
                 document.getElementById('val-daily').innerText = data.daily !== undefined ? data.daily.toFixed(1) : "0.0";
                 document.getElementById('val-mtd').innerText = data.mtd !== undefined ? data.mtd.toFixed(1) : "0.0";
                 document.getElementById('val-ytd').innerText = data.ytd !== undefined ? data.ytd.toFixed(1) : "0.0";
-                
-                // Ενημέρωση Mode (Home / Out)
                 const modeEl = document.getElementById('lbl-mode');
                 modeEl.innerText = data.mode === "Home" ? "🏠 HOME" : "🚶 OUT";
                 modeEl.className = data.mode === "Home" ? "value mode-home" : "value mode-out";
-                
-                // Ενημέρωση Βάνας
                 const valveEl = document.getElementById('lbl-valve');
                 valveEl.innerText = data.valve === "Open" ? "🔓 OPEN" : "🔒 CLOSED";
                 valveEl.className = data.valve === "Open" ? "value valve-open" : "value valve-closed";
-
-                // Προσθήκη Log στην οθόνη
-                addLog(`Δεδομένα συγχρονίστηκαν. TD: ${data.daily}L | Βάνα: ${data.valve}`);
             }
         });
 
-        // Συναρτήση για την προσθήκη μηνυμάτων στην Console οθόνη
         function addLog(text) {
             const cBox = document.getElementById('console-box');
             const now = new Date();
-            const timeStr = now.toTimeString().split(' ')[0];
-            cBox.innerHTML += `[${timeStr}] ${text}<br>`;
-            cBox.scrollTop = cBox.scrollHeight; // Αυτόματο scroll κάτω
+            cBox.innerHTML += `[${now.toLocaleTimeString()}] ${text}<br>`;
+            cBox.scrollTop = cBox.scrollHeight;
         }
 
-        // Συνάρτηση που θα στέλνει τις εντολές Open/Close στο Firebase
         function sendCommand(cmd) {
             addLog(`Αποστολή εντολής: ${cmd}...`);
             database.ref('system/command').set(cmd)
                 .then(() => addLog(`✅ Η εντολή ${cmd} καταχωρήθηκε.`))
-                .catch((err) => addLog(`❌ Σφάλμα εντολής: ${err}`));
+                .catch((err) => addLog(`❌ Σφάλμα: ${err}`));
         }
     </script>
 </body>
 </html>
+
