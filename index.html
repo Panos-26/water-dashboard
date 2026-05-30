@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Water V5 Dashboard</title>
+    <!-- Φόρτωσης των Firebase SDK v8 Core και Realtime Database -->
     <script src="https://cloudflare.com"></script>
     <script src="https://cloudflare.com"></script>
     <style>
@@ -65,16 +66,25 @@
         <div class="console-title">LIVE LOGS CONSOLE</div>
         <div id="console-box" class="console-box">[SYS] Το Dashboard εκκινήθηκε...<br></div>
     </div>
-    <script>
-        // ✅ ΑΠΛΟ ΚΑΙ ΕΓΚΥΡΟ CONFIG
+       <script>
+        // ✅ ΣΩΣΤΟ ΚΑΙ ΠΛΗΡΕΣ CONFIG (PROJECT_WATER_V5)
         const firebaseConfig = {
-            databaseURL: "https://firebaseio.com"
+            apiKey: "AIzaSyD3DYCqG4kN2m-4EFVj3zQI5gtHHRI2BTc",
+            authDomain: "project-water-v5.firebaseapp.com",
+            databaseURL: "https://project-water-v5-default-rtdb.firebaseio.com",
+            projectId: "project-water-v5",
+            storageBucket: "project-water-v5.firebasestorage.app",
+            messagingSenderId: "708204498735",
+            appId: "1:708204498735:web:05ed07f551918579ed9bda",
+            measurementId: "G-EWXYKBM1N2"
         };
         
         // Αρχικοποίηση με έλεγχο σφαλμάτων
+        var database = null;
         try {
             firebase.initializeApp(firebaseConfig);
-            var database = firebase.database();
+            database = firebase.database();
+            console.log("✅ Η βάση δεδομένων αρχικοποιήθηκε επιτυχώς!");
         } catch(e) {
             console.error("Firebase init error:", e);
         }
@@ -119,6 +129,7 @@
                 .catch((err) => addLog(`❌ Σφάλμα Firebase: ${err.message}`));
         }
     </script>
+
 </body>
 </html>
 
