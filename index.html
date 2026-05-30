@@ -79,16 +79,29 @@
             measurementId: "G-EWXYKBM1N2"
         };
         
-        // Αρχικοποίηση με έλεγχο σφαλμάτων
-        var database = null;
-        try {
-            firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-            console.log("✅ Η βάση δεδομένων αρχικοποιήθηκε επιτυχώς!");
-        } catch(e) {
-            console.error("Firebase init error:", e);
-        }
+        // 2. Αρχικοποίηση
+    var database = null;
+    try {
+        firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+        console.log("✅ Αρχικοποίηση OK");
+    } catch(e) {
+        console.error("Init Error:", e);
+    }
 
+    // 3. ΚΑΡΦΩΤΗ ΕΓΓΡΑΦΗ ΤΩΡΑ (Τρέχει αυτόματα με το που ανοίγει η σελίδα)
+    if (database) {
+        // Γράφουμε δοκιμαστικά τη λέξη "TEST_OK" μέσα στο system/command
+        database.ref('system/command').set("TEST_OK")
+            .then(() => {
+                alert("🚀 ΕΠΙΤΥΧΙΑ! Η βάση ενημερώθηκε καρφωτά με TEST_OK!");
+            })
+            .catch((err) => {
+                alert("❌ ΑΠΟΤΥΧΙΑ ΕΓΓΡΑΦΗΣ: " + err.message);
+            });
+    } else {
+        alert("❌ Η βάση δεν είναι έτοιμη (database είναι null)");
+    }
         // Ακρόαση αλλαγών από το ESP32
         if (database) {
             database.ref('system').on('value', (snapshot) => {
