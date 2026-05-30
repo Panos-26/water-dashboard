@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Water V5 Dashboard</title>
-    <!-- ΑΛΛΑΓΗ ΣΕ CDNJS ΓΙΑ ΝΑ ΞΕΚΛΕΙΔΩΣΕΙ Ο BROWSER -->
+    
+    <!-- ✅ ΔΙΟΡΘΩΣΗ: ΦΟΡΤΩΣΗ FIREBASE SDK v8 ΑΠΟ CDNJS -->
     <script src="https://cloudflare.com"></script>
     <script src="https://cloudflare.com"></script>
 
@@ -67,48 +68,52 @@
         <div class="console-title">LIVE LOGS CONSOLE</div>
         <div id="console-box" class="console-box">[SYS] Το Dashboard εκκινήθηκε...<br></div>
     </div>
+
     <script>
-    // 2. ΤΟ ΣΩΣΤΟ ΣΑΣ CONFIG
-    const firebaseConfig = {
-        apiKey: "AIzaSyD3DYCqG4kN2m-4EFVj3zQI5gtHHRI2BTc",
-        authDomain: "project-water-v5.firebaseapp.com",
-        databaseURL: "https://project-water-v5-default-rtdb.firebaseio.com",
-        projectId: "project-water-v5",
-        storageBucket: "project-water-v5.firebasestorage.app",
-        messagingSenderId: "708204498735",
-        appId: "1:708204498735:web:05ed07f551918579ed9bda",
-        measurementId: "G-EWXYKBM1N2"
-    };        
-        var database = null;
+    // 🔥 ΕΞΥΠΝΗ ΦΟΡΤΩΣΗ FIREBASE (Παράκαμψη των χαλασμένων scripts)
+    const scriptApp = document.createElement('script');
+    scriptApp.src = "https://cloudflare.com";
+    document.head.appendChild(scriptApp);
 
-    // 3. ΔΟΚΙΜΗ ΑΡΧΙΚΟΠΟΙΗΣΗΣ ΜΕ ΑΝΑΛΥΤΙΚΗ ΚΑΤΑΓΡΑΦΗ
-    try {
-        if (typeof firebase === 'undefined') {
-            alert("❌ ΚΡΙΣΙΜΟ ΛΑΘΟΣ: Ο browser δεν φόρτωσε τα scripts από τη gstatic! Ελέγξτε αν υπάρχουν οι γραμμές πάνω από το config.");
-        } else {
+    scriptApp.onload = function() {
+        const scriptDB = document.createElement('script');
+        scriptDB.src = "https://cloudflare.com";
+        document.head.appendChild(scriptDB);
+        
+        scriptDB.onload = function() {
+            // Μόλις φορτώσουν με ασφάλεια, ξεκινάει η αρχικοποίηση
+            εκκίνησηFirebase();
+        };
+    };
+
+    function εκκίνησηFirebase() {
+        // ✅ ΤΟ ΣΩΣΤΟ ΣΑΣ CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3DYCqG4kN2m-4EFVj3zQI5gtHHRI2BTc",
+            authDomain: "://firebaseapp.com",
+            databaseURL: "https://firebaseio.com",
+            projectId: "project-water-v5",
+            storageBucket: "project-water-v5.firebasestorage.app",
+            messagingSenderId: "708204498735",
+            appId: "1:708204498735:web:05ed07f551918579ed9bda",
+            measurementId: "G-EWXYKBM1N2"
+        };        
+        
+        try {
             firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-            alert("✅ ΕΠΙΤΥΧΙΑ: Το Firebase αρχικοποιήθηκε σωστά!");
+            window.database = firebase.database();
+            addLog("✅ Firebase συνδέθηκε επιτυχώς!");
+            
+            // Ενεργοποίηση της λήψης δεδομένων
+            ενεργοποίησηΑκρόασης();
+        } catch(e) {
+            addLog("❌ Σφάλμα σύνδεσης: " + e.message);
         }
-    } catch(e) {
-        alert("❌ ΣΦΑΛΜΑ ΚΑΤΑ ΤΗΝ ΑΡΧΙΚΟΠΟΙΗΣΗ: " + e.message);
     }
 
-    // 4. ΑΥΤΟΜΑΤΗ ΔΟΚΙΜΑΣΤΙΚΗ ΕΓΓΡΑΦΗ
-    if (database) {
-        database.ref('system/command').set("TEST_OK")
-            .then(() => {
-                alert("🚀 Η ΒΑΣΗ ΕΝΗΜΕΡΩΘΗΚΕ! Το TEST_OK γράφτηκε στο Firebase!");
-            })
-            .catch((err) => {
-                alert("❌ ΑΠΟΤΥΧΙΑ ΕΓΓΡΑΦΗΣ ΣΤΗ ΒΑΣΗ: " + err.message);
-            });
-    } else {
-        alert("❌ Η βάση δεν είναι έτοιμη (database είναι null)");
-    }
-        // Ακρόαση αλλαγών από το ESP32
-        if (database) {
-            database.ref('system').on('value', (snapshot) => {
+    function ενεργοποίησηΑκρόασης() {
+        if (window.database) {
+            window.database.ref('system').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if(data) {
                     document.getElementById('val-daily').innerText = data.daily !== undefined ? Number(data.daily).toFixed(1) : "0.0";
@@ -125,28 +130,31 @@
                 }
             });
         }
+    }
 
-        function addLog(text) {
-            const cBox = document.getElementById('console-box');
-            const now = new Date();
-            cBox.innerHTML += `[${now.toLocaleTimeString()}] ${text}<br>`;
-            cBox.scrollTop = cBox.scrollHeight;
+    function addLog(text) {
+        const cBox = document.getElementById('console-box');
+        const now = new Date();
+        cBox.innerHTML += `[${now.toLocaleTimeString()}] ${text}<br>`;
+        cBox.scrollTop = cBox.scrollHeight;
+    }
+
+    function sendCommand(cmd) {
+        addLog(`Αποστολή εντολής: ${cmd}...`);
+        
+        if (!window.database) {
+            addLog("❌ Σφάλμα: Η βάση δεδομένων δεν είναι έτοιμη.");
+            return;
         }
 
-        function sendCommand(cmd) {
-            addLog(`Αποστολή εντολής: ${cmd}...`);
-            
-            if (!database) {
-                addLog("❌ Σφάλμα: Η βάση δεδομένων δεν είναι έτοιμη.");
-                return;
-            }
-
-            database.ref('system/command').set(cmd)
-                .then(() => addLog(`✅ Η εντολή ${cmd} καταχωρήθηκε.`))
-                .catch((err) => addLog(`❌ Σφάλμα Firebase: ${err.message}`));
-        }
-    </script>
+        window.database.ref('system/command').set(cmd)
+            .then(() => addLog(`✅ Η εντολή ${cmd} καταχωρήθηκε.`))
+            .catch((err) => addLog(`❌ Σφάλμα Firebase: ${err.message}`));
+    }
+</script>
 
 </body>
+</html>
+
 </html>
 
