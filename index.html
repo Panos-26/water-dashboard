@@ -67,37 +67,40 @@
         <div id="console-box" class="console-box">[SYS] Το Dashboard εκκινήθηκε...<br></div>
     </div>
     <script>
-        // ✅ ΣΩΣΤΟ ΚΑΙ ΠΛΗΡΕΣ CONFIG (PROJECT_WATER_V5)
-        const firebaseConfig = {
-            apiKey: "AIzaSyD3DYCqG4kN2m-4EFVj3zQI5gtHHRI2BTc",
-            authDomain: "project-water-v5.firebaseapp.com",
-            databaseURL: "https://project-water-v5-default-rtdb.firebaseio.com",
-            projectId: "project-water-v5",
-            storageBucket: "project-water-v5.firebasestorage.app",
-            messagingSenderId: "708204498735",
-            appId: "1:708204498735:web:05ed07f551918579ed9bda",
-            measurementId: "G-EWXYKBM1N2"
-        };
-        
-        // 2. Αρχικοποίηση
-    var database = null;
+    // 2. ΤΟ ΣΩΣΤΟ ΣΑΣ CONFIG
+    const firebaseConfig = {
+        apiKey: "AIzaSyD3DYCqG4kN2m-4EFVj3zQI5gtHHRI2BTc",
+        authDomain: "project-water-v5.firebaseapp.com",
+        databaseURL: "https://project-water-v5-default-rtdb.firebaseio.com",
+        projectId: "project-water-v5",
+        storageBucket: "project-water-v5.firebasestorage.app",
+        messagingSenderId: "708204498735",
+        appId: "1:708204498735:web:05ed07f551918579ed9bda",
+        measurementId: "G-EWXYKBM1N2"
+    };        
+        var database = null;
+
+    // 3. ΔΟΚΙΜΗ ΑΡΧΙΚΟΠΟΙΗΣΗΣ ΜΕ ΑΝΑΛΥΤΙΚΗ ΚΑΤΑΓΡΑΦΗ
     try {
-        firebase.initializeApp(firebaseConfig);
-        database = firebase.database();
-        console.log("✅ Αρχικοποίηση OK");
+        if (typeof firebase === 'undefined') {
+            alert("❌ ΚΡΙΣΙΜΟ ΛΑΘΟΣ: Ο browser δεν φόρτωσε τα scripts από τη gstatic! Ελέγξτε αν υπάρχουν οι γραμμές πάνω από το config.");
+        } else {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            alert("✅ ΕΠΙΤΥΧΙΑ: Το Firebase αρχικοποιήθηκε σωστά!");
+        }
     } catch(e) {
-        console.error("Init Error:", e);
+        alert("❌ ΣΦΑΛΜΑ ΚΑΤΑ ΤΗΝ ΑΡΧΙΚΟΠΟΙΗΣΗ: " + e.message);
     }
 
-    // 3. ΚΑΡΦΩΤΗ ΕΓΓΡΑΦΗ ΤΩΡΑ (Τρέχει αυτόματα με το που ανοίγει η σελίδα)
+    // 4. ΑΥΤΟΜΑΤΗ ΔΟΚΙΜΑΣΤΙΚΗ ΕΓΓΡΑΦΗ
     if (database) {
-        // Γράφουμε δοκιμαστικά τη λέξη "TEST_OK" μέσα στο system/command
         database.ref('system/command').set("TEST_OK")
             .then(() => {
-                alert("🚀 ΕΠΙΤΥΧΙΑ! Η βάση ενημερώθηκε καρφωτά με TEST_OK!");
+                alert("🚀 Η ΒΑΣΗ ΕΝΗΜΕΡΩΘΗΚΕ! Το TEST_OK γράφτηκε στο Firebase!");
             })
             .catch((err) => {
-                alert("❌ ΑΠΟΤΥΧΙΑ ΕΓΓΡΑΦΗΣ: " + err.message);
+                alert("❌ ΑΠΟΤΥΧΙΑ ΕΓΓΡΑΦΗΣ ΣΤΗ ΒΑΣΗ: " + err.message);
             });
     } else {
         alert("❌ Η βάση δεν είναι έτοιμη (database είναι null)");
